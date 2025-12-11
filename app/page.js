@@ -1,19 +1,21 @@
-// archivo: app/page.js (VERSIÓN FINAL DEL DASHBOARD)
+// archivo: app/page.js (CÓDIGO COMPLETO Y FINAL DEL DASHBOARD)
 'use client'; 
 
 import { useState } from 'react';
+// Importamos todos los componentes necesarios para el Dashboard
 import AgregarProducto from '../components/AgregarProducto';
 import ListaInventario from '../components/ListaInventario';
 import RegistrarVenta from '../components/RegistrarVenta';
-import ResumenGanancias from '../components/ResumenGanancias'; // <-- Importado
-import ListaVentas from '../components/ListaVentas'; // <-- Importado
+import ResumenGanancias from '../components/ResumenGanancias';
+import ListaVentas from '../components/ListaVentas'; 
 
 export default function Home() {
-  // Estados para forzar la recarga de todos los módulos
+  // Estado que actúa como un "interruptor" para forzar la recarga de todos los módulos de datos
   const [refreshKey, setRefreshKey] = useState(0); 
 
+  // Función que se pasa a los componentes para notificar que una acción crítica ha ocurrido
   const handleRefresh = () => {
-    // Incrementa la llave, forzando la recarga de todos los componentes de datos
+    // Incrementa la llave, forzando la recarga de todos los componentes que usan refreshKey
     setRefreshKey(prevKey => prevKey + 1);
   };
   
@@ -27,6 +29,7 @@ export default function Home() {
           <button 
               onClick={handleRefresh}
               className="p-3 bg-blue-500 text-white font-semibold rounded hover:bg-blue-600 transition"
+              title="Recarga todos los reportes y tablas"
           >
               🔄 Recargar Datos (Refrescar)
           </button>
@@ -41,18 +44,24 @@ export default function Home() {
         
         {/* Columna Izquierda (33%): Registro de Transacciones */}
         <div className="lg:col-span-1 space-y-8">
+            {/* Si registras una venta, recarga todo */}
             <RegistrarVenta onVentaRegistrada={handleRefresh} />
+            
+            {/* Si agregas un producto, recarga todo (especialmente el inventario) */}
             <AgregarProducto onProductoAgregado={handleRefresh} />
         </div>
 
         {/* Columna Derecha (66%): Inventario y Historial */}
         <div className="lg:col-span-2 space-y-8">
             
-            {/* Inventario */}
+            {/* Inventario: Recarga si algo cambia (Venta o Nuevo Producto) */}
             <ListaInventario refreshToggle={refreshKey} />
             
-            {/* Historial de Ventas */}
-            <ListaVentas refreshToggle={refreshKey} />
+            {/* Historial de Ventas: Recarga si algo cambia */}
+            <ListaVentas 
+                refreshToggle={refreshKey} 
+                onVentaEliminada={handleRefresh} // <-- Si se elimina una venta, recarga todo
+            />
             
         </div>
       </div>

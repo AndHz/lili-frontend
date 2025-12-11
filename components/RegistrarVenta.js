@@ -5,11 +5,11 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 const RegistrarVenta = ({ onVentaRegistrada }) => {
-    const [productos, setProductos] = useState([]); // Inventario disponible
+    const [productos, setProductos] = useState([]); 
     const [venta, setVenta] = useState({
         cliente_nombre: '',
         estado: 'Pagada',
-        detalles: [], // Array de { productoId, cantidad, precio_final_unitario }
+        detalles: [], 
     });
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
@@ -19,7 +19,6 @@ const RegistrarVenta = ({ onVentaRegistrada }) => {
     const fetchProductos = useCallback(async () => {
         try {
             const response = await axios.get(`${API_URL}/productos`);
-            // Filtrar solo productos con stock > 0 para la venta
             setProductos(response.data.filter(p => p.Inventario?.cantidad_stock > 0));
         } catch (error) {
             console.error('Error al cargar productos para la venta:', error);
@@ -38,7 +37,6 @@ const RegistrarVenta = ({ onVentaRegistrada }) => {
     };
 
     const handleAgregarDetalle = () => {
-        // Añade una nueva línea de detalle vacía
         setVenta({
             ...venta,
             detalles: [...venta.detalles, { 
@@ -53,7 +51,6 @@ const RegistrarVenta = ({ onVentaRegistrada }) => {
         const list = [...venta.detalles];
         list[index][name] = value;
         
-        // Si el usuario selecciona un producto, cargamos su precio sugerido
         if (name === 'productoId' && value) {
             const productoSeleccionado = productos.find(p => p.id == value);
             if (productoSeleccionado) {
@@ -76,7 +73,6 @@ const RegistrarVenta = ({ onVentaRegistrada }) => {
         setLoading(true);
         setMessage('');
 
-        // Formatear datos para el Backend: asegurar que los números sean números
         const dataToSend = {
             ...venta,
             detalles: venta.detalles.map(d => ({
@@ -84,7 +80,7 @@ const RegistrarVenta = ({ onVentaRegistrada }) => {
                 productoId: parseInt(d.productoId, 10),
                 cantidad: parseInt(d.cantidad, 10),
                 precio_final_unitario: parseFloat(d.precio_final_unitario),
-            })).filter(d => d.productoId && d.cantidad > 0), // Filtrar líneas vacías
+            })).filter(d => d.productoId && d.cantidad > 0), 
         };
         
         if (dataToSend.detalles.length === 0) {
@@ -97,9 +93,8 @@ const RegistrarVenta = ({ onVentaRegistrada }) => {
             await axios.post(`${API_URL}/ventas`, dataToSend);
             setMessage('✅ Venta registrada y stock actualizado con éxito!');
             
-            // Limpiar formulario y notificar
             setVenta({ cliente_nombre: '', estado: 'Pagada', detalles: [] });
-            onVentaRegistrada(); // Recarga la lista de ventas y posiblemente el inventario
+            onVentaRegistrada(); 
 
         } catch (error) {
             console.error('Error al registrar venta:', error.response ? error.response.data : error.message);
@@ -109,13 +104,14 @@ const RegistrarVenta = ({ onVentaRegistrada }) => {
         }
     };
     
-    // Calcula los totales en tiempo real
     const totales = venta.detalles.reduce((acc, detalle) => {
         const cantidad = parseFloat(detalle.cantidad) || 0;
         const precio = parseFloat(detalle.precio_final_unitario) || 0;
         acc.subtotal += cantidad * precio;
         return acc;
     }, { subtotal: 0 });
+
+    const inputClasses = "p-2 border rounded text-gray-800 placeholder:text-gray-500";
 
 
     return (
@@ -130,13 +126,13 @@ const RegistrarVenta = ({ onVentaRegistrada }) => {
                         value={venta.cliente_nombre}
                         onChange={handleInputChange}
                         placeholder="Nombre del Cliente (Opcional)"
-                        className="p-2 border rounded"
+                        className={inputClasses}
                     />
                     <select
                         name="estado"
                         value={venta.estado}
                         onChange={handleInputChange}
-                        className="p-2 border rounded bg-white"
+                        className="p-2 border rounded bg-white text-gray-800"
                         required
                     >
                         <option value="Pagada">Pagada</option>
@@ -146,7 +142,7 @@ const RegistrarVenta = ({ onVentaRegistrada }) => {
                 </div>
 
                 {/* Detalles de la Venta (Líneas de Producto) */}
-                <h3 className="text-lg font-semibold mb-2">Artículos:</h3>
+                <h3 className="text-lg font-semibold mb-2 text-gray-800">Artículos:</h3>
                 <div className="space-y-3 mb-4">
                     {venta.detalles.map((detalle, index) => (
                         <div key={index} className="flex items-center space-x-2 bg-gray-50 p-2 rounded">
@@ -154,7 +150,7 @@ const RegistrarVenta = ({ onVentaRegistrada }) => {
                             <select
                                 value={detalle.productoId}
                                 onChange={(e) => handleDetalleChange(index, 'productoId', e.target.value)}
-                                className="p-2 border rounded flex-1 bg-white"
+                                className="p-2 border rounded flex-1 bg-white text-gray-800"
                                 required
                             >
                                 <option value="">--- Seleccionar Producto ---</option>
@@ -172,7 +168,7 @@ const RegistrarVenta = ({ onVentaRegistrada }) => {
                                 onChange={(e) => handleDetalleChange(index, 'cantidad', e.target.value)}
                                 placeholder="Cant."
                                 min="1"
-                                className="w-16 p-2 border rounded text-center"
+                                className="w-16 p-2 border rounded text-center text-gray-800"
                                 required
                             />
 
@@ -183,7 +179,7 @@ const RegistrarVenta = ({ onVentaRegistrada }) => {
                                 onChange={(e) => handleDetalleChange(index, 'precio_final_unitario', e.target.value)}
                                 placeholder="Precio Final"
                                 step="0.01"
-                                className="w-24 p-2 border rounded"
+                                className="w-24 p-2 border rounded text-gray-800"
                                 required
                             />
                             
@@ -203,14 +199,14 @@ const RegistrarVenta = ({ onVentaRegistrada }) => {
                 <button
                     type="button"
                     onClick={handleAgregarDetalle}
-                    className="w-full p-2 mb-4 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+                    className="w-full p-2 mb-4 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 font-semibold"
                 >
                     + Agregar Artículo
                 </button>
                 
                 {/* Totales y Envío */}
                 <div className="border-t pt-3 flex justify-between items-center">
-                    <h3 className="text-xl font-bold">Total Venta: ${totales.subtotal.toFixed(2)}</h3>
+                    <h3 className="text-xl font-bold text-gray-800">Total Venta: S/{totales.subtotal.toFixed(2)}</h3>
                     <button
                         type="submit"
                         disabled={loading || totales.subtotal === 0}
