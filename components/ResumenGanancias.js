@@ -62,7 +62,7 @@ const ResumenGanancias = ({ refreshToggle }) => {
             </div>
             {/*  */}
             <p className="mt-4 text-sm text-gray-500">
-                Esta es la respuesta a la pregunta: ¿cuánto estoy ganando/perdiendo? La Ganancia Neta es calculada automáticamente por el *Backend* en cada venta (Precio Final - Costo de Compra).
+                
             </p>
         </div>
     );
