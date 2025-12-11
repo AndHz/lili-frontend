@@ -43,9 +43,9 @@ const ResumenGanancias = ({ refreshToggle }) => {
     if (error) return <div className="text-center p-4 text-red-600">Error: {error}</div>;
 
     const stats = [
-        { label: "Ganancia Neta Total", value: `$${parseFloat(resumen.gananciaNetaTotal).toFixed(2)}`, color: 'text-green-600', icon: '📈' },
-        { label: "Ventas Totales (Bruto)", value: `$${parseFloat(resumen.totalVentasBruto).toFixed(2)}`, color: 'text-blue-600', icon: '💸' },
-        { label: "Valor Actual de Inventario", value: `$${parseFloat(valorInventario).toFixed(2)}`, color: 'text-yellow-600', icon: '📦' },
+        { label: "Ganancia Neta Total", value: `S/${parseFloat(resumen.gananciaNetaTotal).toFixed(2)}`, color: 'text-green-600', icon: '📈' },
+        { label: "Ventas Totales (Bruto)", value: `S/${parseFloat(resumen.totalVentasBruto).toFixed(2)}`, color: 'text-blue-600', icon: '💸' },
+        { label: "Valor Actual de Inventario", value: `S/${parseFloat(valorInventario).toFixed(2)}`, color: 'text-yellow-600', icon: '📦' },
         { label: "Transacciones Registradas", value: resumen.totalTransacciones, color: 'text-purple-600', icon: '🧾' },
     ];
 
